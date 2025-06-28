@@ -1,0 +1,2 @@
+0x310000
+.\mklittlefs.exe -c quang-mp3 -p 256 -b 4096 -s 0xF0000 quang-mp3.bin

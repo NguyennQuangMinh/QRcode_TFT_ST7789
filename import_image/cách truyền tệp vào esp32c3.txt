@@ -1,0 +1,4 @@
+b1: lấy ảnh và convert sang file .bin
+b2: chọn chip esp32, nạp cổng usb
+b3: tìm đến nơi lưu file, chọn địa chỉ offset 0x290000(cho phân vùng mặc định)
+b4: nhớ tắt hết các cổng serial trên arduino hoặc trình biên dịch khác
