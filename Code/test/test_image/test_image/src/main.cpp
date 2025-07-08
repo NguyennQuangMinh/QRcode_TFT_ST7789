@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <LittleFS.h>
 
 // JPEG decoder library
@@ -21,6 +23,15 @@ Adafruit_ST7789 tft=Adafruit_ST7789(&SPI, TFT_CS, TFT_DC, TFT_RST);
 
 boolean SPIFFSInited = false;
 int imageIndex = 0;
+
+void HomeScreen();
+void testdrawtext(char *text, uint16_t color);
+void listDir(fs::FS &fs, const char *dirname, uint8_t levels);
+void drawFSJpeg(const char *filename, int xpos, int ypos);
+void jpegRender(int xpos, int ypos);
+void jpegInfo();
+
+
 
 void setup(void) {
   Serial.begin(115200);
@@ -47,6 +58,11 @@ void setup(void) {
   HomeScreen();
 }
 
+
+void loop() {
+
+}
+
 void HomeScreen(){
   if (SPIFFSInited) {
 
@@ -65,9 +81,9 @@ void HomeScreen(){
   //   fileIndex = "iot.jpg";
     // Serial.println("fileIndex : " + fileIndex);
     drawFSJpeg(fileIndex.c_str(), 0, 0);
-    delay(5000);
+    delay(2000);
 
-    // %PIN
+    // %PIN High
     fileIndex = "/";
 
     // if (imageIndex < 10) {
@@ -78,13 +94,108 @@ void HomeScreen(){
     fileIndex += "Pin_High.jpg";
   //   fileIndex = "iot.jpg";
     // Serial.println("fileIndex : " + fileIndex);
-    drawFSJpeg(fileIndex.c_str(), 0, 0);
-    // delay(5000);
+    drawFSJpeg(fileIndex.c_str(), 200, 5);
+    delay(2000);
+
+    // %PIN Medium
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "Pin_Medium.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 200, 5);
+    delay(2000);
+
+    // %PIN Low
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "Pin_Low.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 200, 5);
+    delay(2000);
+
+    // %PIN Very Low
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "Pin_VeryLow.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 200, 5);
+    delay(2000);
+
+    // WiFi_High
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "WiFi_High.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 163, 0);
+    delay(2000);
+
+    // WiFi_Medium
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "WiFi_Medium.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 163, 0);
+    delay(2000);
+
+    // WiFi_Low
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "WiFi_Low.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 163, 0);
+    delay(2000);
+
+    // WiFi_Low
+    fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "WiFi_Disconnect.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 163, 0);
+    delay(2000);
+
   }
-}
-
-void loop() {
-
 }
 
 void testdrawtext(char *text, uint16_t color) {

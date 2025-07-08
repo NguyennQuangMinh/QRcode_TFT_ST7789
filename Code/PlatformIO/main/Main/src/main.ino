@@ -1,3 +1,9 @@
+#include <Arduino.h>
+#include "stdio.h"
+#include "stdint.h"
+#include "cstring"
+#include <FS.h>
+
 #include <Adafruit_GFX.h>      
 #include <Adafruit_ST7789.h>   
 #include <SPI.h>
@@ -32,51 +38,19 @@ Adafruit_ST7789 display=Adafruit_ST7789(&SPI, TFT_CS, TFT_DC, TFT_RST);
 QRcode_ST7789 qrcode(&display);
 
 bool qrDisplayed = false;
-
-// viết chữ lên màn hình TFT_ST7789
-void testdrawtext(char *text, uint16_t color, int16_t x, int16_t y,  uint8_t SizeText) {
-    display.setRotation(0);
-    display.setCursor(x, y);
-    display.setTextColor(color);
-    display.setTextSize(SizeText);
-    display.setTextWrap(true);
-    display.print(text);
-}
-
-// hiển thị QR_code
-void Draw_QRcode(char *text){
-    display.fillScreen(ST77XX_WHITE); // Xóa màn hình
-    //
-    testdrawtext("IOT SOLUTION", ST77XX_BLUE, 10, 10, 3);
-    // Khởi tạo QR code
-    qrcode.init();
-    qrcode.create(text, 45, 5);
-    //
-    testdrawtext("SCAN THE QR CODE", ST77XX_GREEN, 20, 290, 2);
-}
-
 boolean SPIFFSInited = false;
-void HomeScreen(){
-  if (SPIFFSInited) {
 
-    // if (imageIndex > 45) {
-    //   imageIndex = 0;
-    // }
+extern void listDir(fs::FS &fs, const char *dirname, uint8_t levels);
+extern void drawFSJpeg(const char *filename, int xpos, int ypos);
+extern void jpegRender(int xpos, int ypos);
+extern void jpegInfo();
 
-    String fileIndex = "/";
+void testdrawtext(const char *text, uint16_t color, int16_t x, int16_t y,  uint8_t SizeText);
+void Draw_QRcode(char* text);
+void HomeScreen();
+void handleATCommand(String message);
 
-    // if (imageIndex < 10) {
-    //   fileIndex += "0" + String(imageIndex);
-    // } else {
-    //   fileIndex += "" + String(imageIndex);
-    // }
-    fileIndex += "HomeScreen.jpg";
-  //   fileIndex = "iot.jpg";
-    // Serial.println("fileIndex : " + fileIndex);
-    drawFSJpeg(fileIndex.c_str(), 0, 0);
-    // delay(5000);
-  }
-}
+
 
 void setup() {
     Serial.begin(115200);
@@ -107,9 +81,54 @@ void loop() {
         // Nhận chuỗi từ máy tính
         String message = mySerial.readStringUntil('\n');
         handleATCommand(message);
-  }
+    }
 }
 
+
+// viết chữ lên màn hình TFT_ST7789
+void testdrawtext(const char *text, uint16_t color, int16_t x, int16_t y,  uint8_t SizeText) {
+    display.setRotation(0);
+    display.setCursor(x, y);
+    display.setTextColor(color);
+    display.setTextSize(SizeText);
+    display.setTextWrap(true);
+    display.print(text);
+}
+
+// hiển thị QR_code
+void Draw_QRcode(char* text){
+    display.fillScreen(ST77XX_WHITE); // Xóa màn hình
+    //
+    testdrawtext("IOT SOLUTION", ST77XX_BLUE, 10, 10, 3);
+    // Khởi tạo QR code
+    qrcode.init();
+    qrcode.create(text, 45, 5);
+    //
+    testdrawtext("SCAN THE QR CODE", ST77XX_GREEN, 20, 290, 2);
+}
+
+
+void HomeScreen(){
+  if (SPIFFSInited) {
+
+    // if (imageIndex > 45) {
+    //   imageIndex = 0;
+    // }
+
+    String fileIndex = "/";
+
+    // if (imageIndex < 10) {
+    //   fileIndex += "0" + String(imageIndex);
+    // } else {
+    //   fileIndex += "" + String(imageIndex);
+    // }
+    fileIndex += "HomeScreen.jpg";
+  //   fileIndex = "iot.jpg";
+    // Serial.println("fileIndex : " + fileIndex);
+    drawFSJpeg(fileIndex.c_str(), 0, 0);
+    // delay(5000);
+  }
+}
 
 void handleATCommand(String message) {
   message.trim();
@@ -153,7 +172,4 @@ void handleATCommand(String message) {
     return; // Đã xử lý lệnh
   }
 }
-
-
-
 

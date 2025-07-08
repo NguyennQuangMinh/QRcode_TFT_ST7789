@@ -1,98 +1,8 @@
-#include <LittleFS.h>
 
-// JPEG decoder library
-#include <JPEGDecoder.h>
-#include <SPI.h>
-#include <Adafruit_GFX.h>      
-#include "Adafruit_ST7789.h"
-
-// For the Adafruit shield, these are the default.
-
-#define TFT_CS      5
-#define TFT_RST     6
-#define TFT_DC      8
-#define TFT_MOSI 	9  
-#define TFT_SCLK 	7
-
-#define TFT_BACKLIGHT -1
-//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
-// Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
-Adafruit_ST7789 tft=Adafruit_ST7789(&SPI, TFT_CS, TFT_DC, TFT_RST);
-
-boolean SPIFFSInited = false;
-int imageIndex = 0;
-
-void setup(void) {
-  Serial.begin(115200);
-  delay(2000);
-  // long unsigned debug_start = millis();
-  // while (!Serial && ((millis() - debug_start) <= 2000));
-
-  SPI.begin(TFT_SCLK, TFT_RST, TFT_MOSI, TFT_CS);
-  tft.init(240, 320);
-  tft.invertDisplay(0);  // hoặc false tùy module
-  //tft.setRotation(3);
-  tft.fillScreen(ST77XX_WHITE);
- // tft.fillScreen(ST77XX_BLACK);
-  // testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST77XX_WHITE);
-  // delay(2000);
-  Serial.println("INIT!");
-
-  if (!LittleFS.begin(1)) {
-    Serial.println("LittleFS Mount Failed");
-    return;
-  }
-  listDir(LittleFS, "/", 3);
-  SPIFFSInited = true;
-  HomeScreen();
-}
-
-void HomeScreen(){
-  if (SPIFFSInited) {
-
-    // if (imageIndex > 45) {
-    //   imageIndex = 0;
-    // }
-
-    String fileIndex = "/";
-
-    // if (imageIndex < 10) {
-    //   fileIndex += "0" + String(imageIndex);
-    // } else {
-    //   fileIndex += "" + String(imageIndex);
-    // }
-    fileIndex += "HomeScreen.jpg";
-  //   fileIndex = "iot.jpg";
-    // Serial.println("fileIndex : " + fileIndex);
-    drawFSJpeg(fileIndex.c_str(), 0, 0);
-    delay(5000);
-
-    // %PIN
-    fileIndex = "/";
-
-    // if (imageIndex < 10) {
-    //   fileIndex += "0" + String(imageIndex);
-    // } else {
-    //   fileIndex += "" + String(imageIndex);
-    // }
-    fileIndex += "Pin_High.jpg";
-  //   fileIndex = "iot.jpg";
-    // Serial.println("fileIndex : " + fileIndex);
-    drawFSJpeg(fileIndex.c_str(), 0, 0);
-    // delay(5000);
-  }
-}
-
-void loop() {
-
-}
-
-void testdrawtext(char *text, uint16_t color) {
-  tft.setCursor(0, 0);
-  tft.setTextColor(color);
-  tft.setTextWrap(true);
-  tft.print(text);
-}
+// void listDir(fs::FS &fs, const char *dirname, uint8_t levels);
+// void drawFSJpeg(const char *filename, int xpos, int ypos);
+// void jpegRender(int xpos, int ypos);
+// void jpegInfo();
 
 void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
   Serial.printf("Listing directory: %s\r\n", dirname);
@@ -176,7 +86,7 @@ void drawFSJpeg(const char *filename, int xpos, int ypos) {
 }
 
 //====================================================================================
-//   Decode and paint onto the TFT screen
+//   Decode and paint onto the display screen
 //====================================================================================
 void jpegRender(int xpos, int ypos) {
 
@@ -232,13 +142,13 @@ void jpegRender(int xpos, int ypos) {
 
 
     // draw image MCU block only if it will fit on the screen
-    if ((mcu_x + win_w) <= tft.width() && (mcu_y + win_h) <= tft.height()) {
-      tft.drawRGBBitmap(mcu_x, mcu_y, pImg, win_w, win_h);
+    if ((mcu_x + win_w) <= display.width() && (mcu_y + win_h) <= display.height()) {
+      display.drawRGBBitmap(mcu_x, mcu_y, pImg, win_w, win_h);
     }
 
     // Stop drawing blocks if the bottom of the screen has been reached,
     // the abort function will close the file
-    else if ((mcu_y + win_h) >= tft.height())
+    else if ((mcu_y + win_h) >= display.height())
       JpegDec.abort();
   }
 

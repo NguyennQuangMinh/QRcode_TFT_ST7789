@@ -50,6 +50,7 @@ void setup() {
     pinMode(TFT_BACKLIGHT, OUTPUT);
     digitalWrite(TFT_BACKLIGHT, HIGH);
     display.fillScreen(ST77XX_WHITE);  // Xóa màn hình
+    
     display.drawPixel(5, 15, ST77XX_RED);
     put_String(10,180,"TRẦN VĂN THẮNG",&Font3); // font2 chuan
 
