@@ -27,9 +27,9 @@
 #define TFT_BACKLIGHT -1
 
 // pin UART
-#define TXD1 0    
-#define RXD1 1   
-HardwareSerial mySerial(1);  // UART1
+// #define TXD1 0    
+// #define RXD1 1   
+// HardwareSerial mySerial(0);  // UART1
 
 // Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
 //                 int8_t rst = -1);
@@ -50,14 +50,12 @@ void Draw_QRcode(char* text);
 void HomeScreen();
 void handleATCommand(String message);
 
-
-
 void setup() {
     Serial.begin(115200);
     Serial.println("Starting...");
 
-    mySerial.begin(9600, SERIAL_8N1, RXD1, TXD1);  // UART giao tiếp với Hercules
-    Serial.println("ESP32C3 UART Ready");
+    //mySerial.begin(9600, SERIAL_8N1, RXD1, TXD1);  // UART giao tiếp với Hercules
+    // Serial.println("ESP32C3 UART Ready");
 
     // Khởi tạo SPI và màn hình
     SPI.begin(TFT_SCLK, TFT_RST, TFT_MOSI, TFT_CS);
@@ -75,13 +73,13 @@ void setup() {
 
 }
 
-
 void loop() {
-    if (mySerial.available()) {
-        // Nhận chuỗi từ máy tính
-        String message = mySerial.readStringUntil('\n');
-        handleATCommand(message);
-    }
+  if (Serial.available()) {
+      // Nhận chuỗi từ máy tính
+      String message = Serial.readStringUntil('\n');
+      Serial.println("Received: " + message);  // Debug dòng này
+      handleATCommand(message);
+  }
 }
 
 
@@ -147,13 +145,13 @@ void handleATCommand(String message) {
       // Debug
       char buffer[100];
       sprintf(buffer, "Parsed Y=%d, Size=%d, Text=%s", y, fontSize, text.c_str());
-      mySerial.println(buffer);
+      Serial.println(buffer);
 
       // Hiển thị chữ
       display.fillScreen(ST77XX_WHITE);
       testdrawtext((char*)text.c_str(), ST77XX_BLUE, 10, y, fontSize);
     } else {
-      mySerial.println("Lỗi định dạng lệnh AT+STR_DISPLAY");
+      Serial.println("Lỗi định dạng lệnh AT+STR_DISPLAY");
     }
     return; // Đã xử lý lệnh
   }
@@ -164,7 +162,7 @@ void handleATCommand(String message) {
     fileName.trim();
     fileName.replace("\"", "");
 
-    mySerial.println("Displaying image: " + fileName);
+    Serial.println("Displaying image: " + fileName);
     String fileIndex = "/";
     fileIndex += fileName;
     // Hiển thị ảnh tại góc trên trái
